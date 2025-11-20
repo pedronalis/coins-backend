@@ -2,13 +2,6 @@
 
 Backend REST em Node.js que serve como ponte entre o front-end (Elementor) e o banco de dados PostgreSQL para gerenciamento de moedas de ouro.
 
-## 📚 Guias Disponíveis
-
-- **[GUIA_GITHUB.md](./GUIA_GITHUB.md)** - Guia completo para usar GitHub (criar conta, enviar código, conectar com Easypanel)
-- **[GUIA_DEPLOY.md](./GUIA_DEPLOY.md)** - Guia passo a passo para fazer deploy no Easypanel
-- **[COMO_ATUALIZAR_FRONTEND.md](./COMO_ATUALIZAR_FRONTEND.md)** - Como atualizar o front-end após o deploy
-- **[RESUMO_RAPIDO.md](./RESUMO_RAPIDO.md)** - Resumo visual do processo de deploy
-
 ## 📋 Estrutura do Projeto
 
 ```
@@ -62,13 +55,15 @@ Edite o arquivo `.env` com suas configurações:
 
 ```env
 PORT=3000
-API_KEY=62ba341e-4a6d-4572-b395-6a99f51010d9
+API_KEY=sua-api-key-aqui
 PGHOST=localhost
 PGPORT=5432
 PGDATABASE=clients&sales
 PGUSER=seu-usuario
 PGPASSWORD=sua-senha
 ```
+
+**⚠️ Importante:** Substitua `sua-api-key-aqui` pela sua API key real. Nunca compartilhe sua API key publicamente!
 
 3. **Execute o servidor:**
 
@@ -96,12 +91,14 @@ Busca as moedas de um usuário pelo e-mail.
 ```http
 POST /coins
 Content-Type: application/json
-x-api-key: 62ba341e-4a6d-4572-b395-6a99f51010d9
+x-api-key: sua-api-key-aqui
 
 {
   "email": "usuario@exemplo.com"
 }
 ```
+
+**⚠️ Nota:** Substitua `sua-api-key-aqui` pela sua API key real ao fazer requisições.
 
 **Response 200 (Sucesso):**
 ```json
@@ -152,40 +149,54 @@ Endpoint de health check (não requer autenticação).
 
 ## 🐳 Deploy no Easypanel
 
-Para instruções detalhadas e passo a passo, consulte o **[GUIA_DEPLOY.md](./GUIA_DEPLOY.md)**.
+### 1. Preparação
 
-### Resumo Rápido
+Certifique-se de que todos os arquivos estão no repositório:
+- `package.json`
+- `Dockerfile`
+- `src/` (todos os arquivos)
 
-1. **Preparar código no GitHub:**
-   - Siga o **[GUIA_GITHUB.md](./GUIA_GITHUB.md)** para enviar seu código para o GitHub
+### 2. Configuração no Easypanel
 
-2. **Criar projeto no Easypanel:**
-   - Crie um novo projeto tipo "Aplicativo"
-   - Conecte com seu repositório GitHub
-   - Configure as variáveis de ambiente (veja abaixo)
+1. **Crie um novo projeto** no Easypanel
+2. **Selecione "Aplicativo"** como tipo de aplicação
+3. **Configure o repositório** (GitHub, GitLab, etc.) ou faça upload dos arquivos
+4. **Configure as variáveis de ambiente:**
 
-3. **Variáveis de Ambiente Necessárias:**
+   No painel do Easypanel, adicione as seguintes variáveis de ambiente:
+
    ```
    PORT=3000
-   API_KEY=62ba341e-4a6d-4572-b395-6a99f51010d9
+   API_KEY=sua-api-key-aqui
    PGHOST=seu-host-postgresql
    PGPORT=5432
    PGDATABASE=clients&sales
    PGUSER=seu-usuario
    PGPASSWORD=sua-senha
    ```
-   
+
+   **⚠️ Importante:** Substitua `sua-api-key-aqui` pela sua API key real. Configure essa variável diretamente no painel do Easypanel, nunca no código!
+
    **Ou use DATABASE_URL:**
    ```
    DATABASE_URL=postgresql://user:password@host:port/database
    ```
 
-4. **Fazer Deploy:**
-   - Clique em "Deploy" e aguarde o build
-   - Copie a URL pública fornecida
+5. **Configure a porta:** O Easypanel geralmente detecta automaticamente, mas certifique-se de que a porta 3000 está exposta
 
-5. **Atualizar Front-end:**
-   - Siga o **[COMO_ATUALIZAR_FRONTEND.md](./COMO_ATUALIZAR_FRONTEND.md)** para atualizar o `coins-widget.html`
+6. **Deploy:** Clique em "Deploy" e aguarde o build e inicialização
+
+### 3. Obter a URL Pública
+
+Após o deploy, o Easypanel fornecerá uma URL pública (ex: `https://seu-app.easypanel.host`).
+
+### 4. Configurar no Front-end
+
+No arquivo `coins-widget.html`, atualize a constante `API_BASE_URL`:
+
+```javascript
+const API_BASE_URL = 'https://seu-app.easypanel.host';
+```
 
 ## 🔒 Segurança
 
@@ -234,13 +245,6 @@ npm start
 ```
 
 O servidor estará disponível em `http://localhost:3000`
-
-## 📖 Documentação Adicional
-
-- **[GUIA_GITHUB.md](./GUIA_GITHUB.md)** - Como usar GitHub do zero
-- **[GUIA_DEPLOY.md](./GUIA_DEPLOY.md)** - Deploy completo no Easypanel
-- **[COMO_ATUALIZAR_FRONTEND.md](./COMO_ATUALIZAR_FRONTEND.md)** - Atualizar o front-end
-- **[RESUMO_RAPIDO.md](./RESUMO_RAPIDO.md)** - Resumo visual do deploy
 
 ## 🐛 Troubleshooting
 
