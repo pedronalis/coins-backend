@@ -1,0 +1,428 @@
+<style>
+  /* Estilos escopados para o widget de moedas */
+  #coins-widget {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  #coins-widget .widget-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+    padding: 2rem;
+    text-align: center;
+  }
+
+  #coins-widget h2 {
+    color: #4a5568;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.75rem;
+    font-weight: 600;
+  }
+
+  #coins-widget .instruction-text {
+    color: #718096;
+    margin: 0 0 1.5rem 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  #coins-widget .form-container {
+    margin-bottom: 1.5rem;
+  }
+
+  #coins-widget .email-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+  }
+
+  #coins-widget .email-input:focus {
+    outline: none;
+    border-color: #667eea;
+  }
+
+  #coins-widget .submit-button {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  #coins-widget .submit-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+
+  #coins-widget .submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  #coins-widget .result-area {
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  #coins-widget .loading-message {
+    color: #667eea;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  #coins-widget .success-message {
+    color: #2d3748;
+    font-size: 1.1rem;
+  }
+
+  #coins-widget .coins-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+    color: #2d3748;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-left: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  #coins-widget .error-message {
+    color: #e53e3e;
+    font-size: 1rem;
+    background: #fed7d7;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #e53e3e;
+  }
+
+  #coins-widget .hidden {
+    display: none;
+  }
+
+  /* Responsividade */
+  @media (max-width: 640px) {
+    #coins-widget {
+      padding: 1rem;
+    }
+
+    #coins-widget .widget-card {
+      padding: 1.5rem;
+    }
+
+    #coins-widget h2 {
+      font-size: 1.5rem;
+    }
+
+    #coins-widget .coins-badge {
+      font-size: 1.1rem;
+      padding: 0.4rem 0.8rem;
+    }
+  }
+</style>
+
+<div id="coins-widget">
+  <div class="widget-card">
+    <h2>Minhas moedas de ouro</h2>
+    <p class="instruction-text">Informe seu e-mail para ver suas moedas de ouro</p>
+    
+    <form id="coins-form" class="form-container">
+      <input 
+        type="email" 
+        id="email-input" 
+        class="email-input" 
+        placeholder="seu@email.com" 
+        required
+      />
+      <button type="submit" id="submit-button" class="submit-button">
+        Verificar moedas
+      </button>
+    </form>
+
+    <div id="result-area" class="result-area hidden">
+      <!-- Conteúdo será inserido dinamicamente via JavaScript -->
+    </div>
+  </div>
+</div>
+
+<script>
+  // ============================================
+  // CONFIGURAÇÃO DA API
+  // ============================================
+  // TODO: Ajuste a URL base da sua API aqui
+  const API_BASE_URL = 'https://SEU_ENDPOINT_BACKEND_AQUI';
+  
+  // API Key fornecida
+  const API_KEY = '62ba341e-4a6d-4572-b395-6a99f51010d9';
+  
+  // Endpoint da API (pode ser ajustado se necessário)
+  const API_ENDPOINT = '/coins';
+  
+  // Formato esperado da resposta da API:
+  // {
+  //   "email": "usuario@exemplo.com",
+  //   "coins": 123
+  // }
+  // Se o formato for diferente, ajuste a função fetchCoinsByEmail abaixo
+
+  // ============================================
+  // FUNÇÕES DE GERENCIAMENTO DE COOKIES
+  // ============================================
+  
+  /**
+   * Cria ou atualiza um cookie com expiração em dias
+   * @param {string} name - Nome do cookie
+   * @param {string} value - Valor do cookie
+   * @param {number} days - Número de dias até expirar
+   */
+  function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = `expires=${date.toUTCString()}`;
+    document.cookie = `${name}=${value};${expires};path=/`;
+  }
+
+  /**
+   * Obtém o valor de um cookie
+   * @param {string} name - Nome do cookie
+   * @returns {string|null} - Valor do cookie ou null se não existir
+   */
+  function getCookie(name) {
+    const nameEQ = `${name}=`;
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+  }
+
+  /**
+   * Remove um cookie
+   * @param {string} name - Nome do cookie a ser removido
+   */
+  function eraseCookie(name) {
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+  }
+
+  // ============================================
+  // INTEGRAÇÃO COM API
+  // ============================================
+  
+  /**
+   * Busca as moedas de ouro de um usuário através da API
+   * @param {string} email - E-mail do usuário
+   * @returns {Promise<number>} - Número de moedas
+   * @throws {Error} - Erro se a requisição falhar
+   */
+  async function fetchCoinsByEmail(email) {
+    try {
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINT}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY,
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('E-mail não encontrado');
+        } else if (response.status === 401 || response.status === 403) {
+          throw new Error('Erro de autenticação na API');
+        } else {
+          throw new Error(`Erro ao buscar moedas: ${response.status}`);
+        }
+      }
+
+      const data = await response.json();
+      
+      // Ajuste aqui se o formato da resposta for diferente
+      if (data.coins === undefined) {
+        throw new Error('Formato de resposta da API inválido');
+      }
+
+      return data.coins;
+    } catch (error) {
+      // Se for erro de rede, lança uma mensagem genérica
+      if (error.message.includes('fetch')) {
+        throw new Error('Erro de conexão. Verifique sua internet e tente novamente.');
+      }
+      throw error;
+    }
+  }
+
+  // ============================================
+  // CONTROLE DE ESTADOS DA UI
+  // ============================================
+  
+  /**
+   * Atualiza o estado visual da interface
+   * @param {string} state - Estado: 'loading', 'success', 'error', 'form'
+   * @param {Object} data - Dados adicionais (ex: { coins, message })
+   */
+  function updateUIState(state, data = {}) {
+    const formContainer = document.querySelector('#coins-widget .form-container');
+    const resultArea = document.getElementById('result-area');
+    const submitButton = document.getElementById('submit-button');
+    const emailInput = document.getElementById('email-input');
+
+    // Limpa o conteúdo anterior
+    resultArea.innerHTML = '';
+    resultArea.className = 'result-area';
+
+    switch (state) {
+      case 'loading':
+        formContainer.classList.add('hidden');
+        resultArea.classList.remove('hidden');
+        resultArea.innerHTML = '<div class="loading-message">Buscando suas moedas...</div>';
+        submitButton.disabled = true;
+        break;
+
+      case 'success':
+        formContainer.classList.add('hidden');
+        resultArea.classList.remove('hidden');
+        const coins = data.coins || 0;
+        resultArea.innerHTML = `
+          <div class="success-message">
+            Você tem <span class="coins-badge">${coins} moedas de ouro</span>
+          </div>
+        `;
+        submitButton.disabled = false;
+        break;
+
+      case 'error':
+        formContainer.classList.remove('hidden');
+        resultArea.classList.remove('hidden');
+        resultArea.innerHTML = `<div class="error-message">${data.message || 'Erro ao buscar suas moedas'}</div>`;
+        submitButton.disabled = false;
+        emailInput.focus();
+        break;
+
+      case 'form':
+      default:
+        formContainer.classList.remove('hidden');
+        resultArea.classList.add('hidden');
+        submitButton.disabled = false;
+        break;
+    }
+  }
+
+  // ============================================
+  // HANDLERS DE EVENTOS
+  // ============================================
+  
+  /**
+   * Manipula o envio do formulário
+   * @param {Event} event - Evento de submit
+   */
+  async function handleFormSubmit(event) {
+    event.preventDefault();
+
+    const emailInput = document.getElementById('email-input');
+    const email = emailInput.value.trim();
+
+    // Validação básica de e-mail
+    if (!email) {
+      updateUIState('error', { message: 'Por favor, informe um e-mail' });
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      updateUIState('error', { message: 'Por favor, informe um e-mail válido' });
+      return;
+    }
+
+    // Exibe estado de carregamento
+    updateUIState('loading');
+
+    try {
+      // Busca as moedas na API
+      const coins = await fetchCoinsByEmail(email);
+
+      // Sucesso: salva o cookie e exibe o resultado
+      setCookie('coins_email', email, 30);
+      setCookie('coins_value', coins.toString(), 30);
+      
+      updateUIState('success', { coins });
+    } catch (error) {
+      // Erro: exibe mensagem e mantém o formulário visível
+      updateUIState('error', { message: error.message });
+    }
+  }
+
+  /**
+   * Inicializa o widget ao carregar a página
+   */
+  function initCoinsWidget() {
+    const form = document.getElementById('coins-form');
+    const savedEmail = getCookie('coins_email');
+
+    // Adiciona listener ao formulário
+    form.addEventListener('submit', handleFormSubmit);
+
+    // Verifica se existe um e-mail salvo em cookie
+    if (savedEmail) {
+      // Ocultar formulário e buscar automaticamente
+      const formContainer = document.querySelector('#coins-widget .form-container');
+      formContainer.classList.add('hidden');
+      
+      updateUIState('loading');
+      
+      // Busca as moedas automaticamente
+      fetchCoinsByEmail(savedEmail)
+        .then((coins) => {
+          const savedCoins = getCookie('coins_value');
+          // Atualiza o cookie de valor se necessário
+          if (savedCoins !== coins.toString()) {
+            setCookie('coins_value', coins.toString(), 30);
+          }
+          updateUIState('success', { coins });
+        })
+        .catch((error) => {
+          // Se houver erro (ex: e-mail não existe mais), limpa o cookie e mostra o formulário
+          eraseCookie('coins_email');
+          eraseCookie('coins_value');
+          updateUIState('form');
+          updateUIState('error', { message: error.message });
+        });
+    } else {
+      // Não há cookie: mostra o formulário normalmente
+      updateUIState('form');
+    }
+  }
+
+  // ============================================
+  // INICIALIZAÇÃO
+  // ============================================
+  
+  // Aguarda o DOM estar pronto antes de inicializar
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCoinsWidget);
+  } else {
+    // DOM já está pronto
+    initCoinsWidget();
+  }
+</script>
+

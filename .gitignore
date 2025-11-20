@@ -1,0 +1,31 @@
+# Dependências
+node_modules/
+
+# Variáveis de ambiente
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Guias e documentação local (opcional - não enviar para GitHub)
+GUIA_DEPLOY.md
+GUIA_GITHUB.md
+COMO_ATUALIZAR_FRONTEND.md
+RESUMO_RAPIDO.md
+
