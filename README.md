@@ -17,8 +17,8 @@ coins-backend/
 │       ├── adminAuth.js     # Rotas de autenticação admin
 │       └── adminCoins.js    # Rotas admin de gerenciamento
 ├── package.json
-├── Dockerfile
-└── migration_add_statement_consults.sql
+└── Dockerfile
+
 ```
 
 ## 🚀 Funcionalidades
