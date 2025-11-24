@@ -1,30 +1,432 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minhas Moedas de Ouro</title>
 <style>
-  /* Estilos escopados para o widget de moedas */
-  #coins-widget {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    max-width: 500px;
-    margin: 0 auto;
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  body {
+    font-family: Ubuntu, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Cantarell, sans-serif;
+    background: #151515;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 2rem;
+  }
+
+  /* Reset Elementor - Forçar largura correta */
+  .elementor-widget-html,
+  .elementor-widget,
+  .elementor-column,
+  .elementor-section,
+  .elementor-container,
+  .elementor-row,
+  .elementor-widget-container,
+  .elementor-column__content,
+  .elementor-element,
+  [class*="elementor"] {
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .elementor-widget-html .elementor-widget-container,
+  .elementor-widget-container,
+  .elementor-column__content,
+  .elementor-column__content * {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .elementor-column__content,
+  .elementor-column {
+    max-width: 100% !important;
+    width: 100% !important;
+    flex-basis: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Widget principal - Largura fixa */
+  #coins-widget {
+    font-family: Ubuntu, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Cantarell, sans-serif;
+    max-width: 600px !important;
+    width: 100% !important;
+    min-width: auto !important;
+    margin: 0 auto !important;
+    padding: 1.5rem !important;
+    background: #151515 !important;
+    border-radius: 12px;
+    position: relative;
+    box-sizing: border-box !important;
+    display: block !important;
+  }
+
+  /* Garantir largura em todos os contextos */
+  body #coins-widget,
+  .elementor-widget-html #coins-widget,
+  .elementor-widget #coins-widget,
+  .elementor-element #coins-widget,
+  .elementor-column #coins-widget,
+  .elementor-section #coins-widget,
+  .elementor-container #coins-widget,
+  .elementor-row #coins-widget,
+  div #coins-widget,
+  [class*="elementor"] #coins-widget {
+    max-width: 600px !important;
+    width: 100% !important;
+    min-width: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  #coins-widget,
+  #coins-widget * {
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 768px) {
+    #coins-widget {
+      width: 100% !important;
+      max-width: 600px !important;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    #coins-widget {
+      width: 100% !important;
+      max-width: 600px !important;
+    }
+  }
+
+  #coins-widget {
+    min-width: 320px;
   }
 
   #coins-widget .widget-card {
-    background: #ffffff;
+    background: #1f1f1f;
     border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
-    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    padding: 1.75rem;
     text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    min-height: 450px;
+    box-sizing: border-box;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   #coins-widget h2 {
-    color: #4a5568;
+    color: #ffffff;
     margin: 0 0 0.5rem 0;
     font-size: 1.75rem;
     font-weight: 600;
   }
 
-  #coins-widget .instruction-text {
-    color: #718096;
+  #coins-widget .title-text h2 {
+    margin: 0 0 0.5rem 0;
+  }
+
+  #coins-widget .instruction-text p {
     margin: 0 0 1.5rem 0;
+  }
+
+  #coins-widget .coins-title-icon {
+    display: inline-block;
+    font-size: 1.5rem;
+    vertical-align: middle;
+    margin: 0 0.25rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  }
+
+  #coins-widget .widget-logo {
+    max-width: 200px;
+    height: auto;
+    margin: 0 auto 1.5rem auto;
+    display: block;
+    filter: brightness(1.1);
+    transition: margin 0.3s ease;
+  }
+
+  #coins-widget .widget-card.logged-in .widget-logo {
+    margin-bottom: 0.75rem;
+  }
+
+  #coins-widget .view-receipt-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #F5DEB3;
+    text-decoration: none;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    margin: 0 auto 0.75rem auto;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    justify-content: center;
+    width: fit-content;
+  }
+
+  #coins-widget .view-receipt-link:hover {
+    background: rgba(245, 222, 179, 0.15);
+    border-color: rgba(212, 165, 116, 0.4);
+    transform: translateY(-1px);
+    color: #FFE4B5;
+  }
+
+  #coins-widget .widget-card.logged-in .result-area {
+    margin-top: 0;
+  }
+
+  #coins-widget .logout-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: Ubuntu, sans-serif;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+    z-index: 10;
+  }
+
+  #coins-widget .logout-button:hover {
+    background: #dc2626;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+  }
+
+  #coins-widget .logout-button.show {
+    display: flex;
+  }
+
+  #coins-widget .info-button {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #b0b0b0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: Ubuntu, sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+    overflow: hidden;
+    white-space: nowrap;
+    gap: 0.5rem;
+  }
+
+  #coins-widget .info-button .info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  #coins-widget .info-button .info-icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  #coins-widget .info-button .info-text {
+    display: none;
+    font-size: 0.85rem;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+  }
+
+  #coins-widget .info-button:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.3);
+    width: 140px;
+    padding: 0 0.75rem;
+    border-radius: 8px;
+    animation: infoPulse 1.5s ease-in-out infinite;
+  }
+
+  #coins-widget .info-button:hover .info-text {
+    display: inline-block;
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  @keyframes infoPulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 8px rgba(255, 255, 255, 0);
+    }
+  }
+
+  .info-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    box-sizing: border-box;
+  }
+
+  .info-modal.show {
+    display: flex !important;
+  }
+
+  .info-modal-content {
+    background: #1f1f1f;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 600px;
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    position: relative;
+    animation: modalFadeIn 0.3s ease-out;
+    font-family: Ubuntu, sans-serif;
+  }
+
+  @keyframes modalFadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .info-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .info-modal-title {
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    font-family: Ubuntu, sans-serif;
+  }
+
+  .info-modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    color: #b0b0b0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-family: Ubuntu, sans-serif;
+  }
+
+  .info-modal-close:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+  }
+
+  .info-modal-body {
+    color: #b0b0b0;
+    line-height: 1.6;
+    font-size: 1rem;
+    font-family: Ubuntu, sans-serif;
+  }
+
+  .info-modal-body p {
+    margin: 0 0 1rem 0;
+  }
+
+  .info-modal-body p:last-child {
+    margin-bottom: 0;
+  }
+
+  .info-modal-highlight {
+    color: #97FF74;
+    font-weight: 600;
+  }
+
+  #coins-widget .title-text,
+  #coins-widget .instruction-text {
+    transition: opacity 0.3s, visibility 0.3s;
+  }
+
+  #coins-widget .title-text.hidden,
+  #coins-widget .instruction-text.hidden {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  #coins-widget .spacer {
+    height: 30px;
+    display: block;
+  }
+
+  #coins-widget .spacer.hidden {
+    display: none;
+  }
+
+  #coins-widget .instruction-text {
+    color: #b0b0b0;
     font-size: 0.95rem;
     line-height: 1.5;
   }
@@ -36,113 +438,490 @@
   #coins-widget .email-input {
     width: 100%;
     padding: 0.75rem 1rem;
-    border: 2px solid #e2e8f0;
+    border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: 8px;
     font-size: 1rem;
     margin-bottom: 1rem;
     box-sizing: border-box;
-    transition: border-color 0.2s;
+    transition: all 0.2s;
+    background: #2a2a2a;
+    color: #ffffff;
+  }
+
+  #coins-widget .email-input::placeholder {
+    color: #888888;
   }
 
   #coins-widget .email-input:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #97FF74;
+    background: #333333;
   }
 
   #coins-widget .submit-button {
     width: 100%;
     padding: 0.875rem 1.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: #97FF74;
+    color: #151515;
     border: none;
     border-radius: 8px;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(151, 255, 116, 0.3);
   }
 
   #coins-widget .submit-button:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 16px rgba(151, 255, 116, 0.5);
+    background: #a8ff85;
   }
 
   #coins-widget .submit-button:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
     transform: none;
+    background: #2a2a2a;
+    color: #888888;
   }
 
   #coins-widget .result-area {
     min-height: 60px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 1rem;
     border-radius: 8px;
+    background: #2a2a2a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: margin 0.3s ease;
   }
 
+
   #coins-widget .loading-message {
-    color: #667eea;
+    color: #97FF74;
     font-size: 1rem;
     font-weight: 500;
   }
 
   #coins-widget .success-message {
-    color: #2d3748;
+    color: #ffffff;
     font-size: 1.1rem;
   }
 
   #coins-widget .coins-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
-    color: #2d3748;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #97FF74;
+    color: #151515;
     padding: 0.5rem 1rem;
     border-radius: 20px;
     font-weight: 700;
     font-size: 1.25rem;
     margin-left: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(151, 255, 116, 0.4);
+  }
+
+  #coins-widget .coins-icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  }
+
+  #coins-widget .coins-icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  #coins-widget .contact-button {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 1rem 2rem;
+    background: #97FF74;
+    color: #151515;
+    text-decoration: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: Ubuntu, sans-serif;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(151, 255, 116, 0.4);
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  #coins-widget .contact-button:hover {
+    background: #a8ff85;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(151, 255, 116, 0.6);
+  }
+
+  #coins-widget .contact-text {
+    margin-top: 0.75rem;
+    color: #b0b0b0;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-bottom: 0;
   }
 
   #coins-widget .error-message {
-    color: #e53e3e;
+    color: #ef4444;
     font-size: 1rem;
-    background: #fed7d7;
+    background: rgba(239, 68, 68, 0.1);
     padding: 0.75rem 1rem;
     border-radius: 8px;
-    border-left: 4px solid #e53e3e;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    margin-top: 1rem;
+    text-align: center;
+    display: none;
   }
 
   #coins-widget .hidden {
     display: none;
   }
 
-  /* Responsividade */
+  #coins-widget .view-receipt-link.hidden {
+    display: none !important;
+  }
+
   @media (max-width: 640px) {
     #coins-widget {
-      padding: 1rem;
+      padding: 0.75rem;
+      max-width: 100%;
     }
 
     #coins-widget .widget-card {
-      padding: 1.5rem;
+      padding: 1.25rem;
+      min-height: auto;
+    }
+
+    #coins-widget .widget-logo {
+      max-width: 140px;
+      margin-bottom: 1rem;
+    }
+
+    #coins-widget .widget-card.logged-in .widget-logo {
+      margin-bottom: 0.5rem;
+    }
+
+    #coins-widget .view-receipt-link {
+      margin: 0 auto 0.5rem auto;
+      font-size: 0.85rem;
+      padding: 0.4rem 0.875rem;
+    }
+
+    #coins-widget .widget-card.logged-in .result-area {
+      margin-top: 0;
     }
 
     #coins-widget h2 {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
+    }
+
+    #coins-widget .instruction-text p {
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    #coins-widget .email-input {
+      padding: 0.65rem 0.875rem;
+      font-size: 0.95rem;
+    }
+
+    #coins-widget .submit-button {
+      padding: 0.75rem 1.25rem;
+      font-size: 0.95rem;
     }
 
     #coins-widget .coins-badge {
-      font-size: 1.1rem;
-      padding: 0.4rem 0.8rem;
+      font-size: 1rem;
+      padding: 0.4rem 0.75rem;
+    }
+
+    #coins-widget .success-message {
+      font-size: 1rem;
+    }
+
+    #coins-widget .contact-button {
+      padding: 0.875rem 1.5rem;
+      font-size: 1rem;
+      max-width: 100%;
+    }
+
+    #coins-widget .contact-text {
+      font-size: 0.8rem;
+      padding: 0 0.5rem;
+    }
+
+    #coins-widget .info-button {
+      width: 28px;
+      height: 28px;
+      font-size: 0.9rem;
+      top: 0.75rem;
+      left: 0.75rem;
+    }
+
+    #coins-widget .info-button:hover {
+      width: 120px;
+    }
+
+    #coins-widget .logout-button {
+      padding: 0.4rem 0.875rem;
+      font-size: 0.85rem;
+      top: 0.75rem;
+      right: 0.75rem;
+    }
+
+    #coins-widget .spacer {
+      height: 20px;
+    }
+
+    #coins-widget .result-area {
+      padding: 0.875rem;
+      min-height: 50px;
+    }
+
+    #coins-widget .error-message {
+      font-size: 0.9rem;
+      padding: 0.65rem 0.875rem;
+      margin-top: 0.75rem;
+    }
+
+    .info-modal-content {
+      padding: 1.5rem;
+      max-width: 90%;
+      margin: 1rem;
+    }
+
+    .info-modal-title {
+      font-size: 1.25rem;
+    }
+
+    .info-modal-body {
+      font-size: 0.9rem;
+    }
+
+    .info-modal-close {
+      width: 28px;
+      height: 28px;
+      font-size: 1rem;
+    }
+  }
+
+  #coins-widget .coins-badge {
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      box-shadow: 0 2px 8px rgba(151, 255, 116, 0.4);
+    }
+    50% {
+      box-shadow: 0 4px 16px rgba(151, 255, 116, 0.6);
+    }
+  }
+
+
+  #coins-widget .receipt-link-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  .receipt-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+    padding: 2rem;
+    overflow-y: auto;
+  }
+
+  .receipt-modal.show {
+    display: flex;
+  }
+
+  .receipt-content {
+    background: #fff8dc;
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.03) 2px,
+        rgba(0, 0, 0, 0.03) 4px
+      );
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    position: relative;
+    font-family: 'Courier New', monospace;
+    border: 1px solid #d4a574;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .receipt-header {
+    background: #f5e6d3;
+    color: #1f1f1f;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 16px 16px 0 0;
+    border-bottom: 2px dashed #d4a574;
+    flex-shrink: 0;
+  }
+
+  .receipt-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .receipt-close-btn {
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    color: #1f1f1f;
+    padding: 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    width: 32px;
+    height: 32px;
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+
+  .receipt-close-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.3);
+  }
+
+  .receipt-body {
+    padding: 1.5rem;
+    color: #1f1f1f;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    background: #fff8dc;
+    max-height: 60vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .receipt-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px dashed #d4a574;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .receipt-item:last-child {
+    border-bottom: none;
+  }
+
+  .receipt-item-left {
+    flex: 1;
+  }
+
+  .receipt-item-right {
+    text-align: right;
+    font-weight: bold;
+  }
+
+  .receipt-item-credit {
+    color: #006400 !important;
+    font-weight: bold;
+  }
+
+  .receipt-item-debit {
+    color: #8b0000 !important;
+    font-weight: bold;
+  }
+
+  .receipt-item-title {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+  }
+
+  .receipt-item-details {
+    font-size: 0.8rem;
+    color: #666;
+  }
+
+  @media (max-width: 640px) {
+    .receipt-modal {
+      padding: 1rem;
+    }
+
+    .receipt-content {
+      max-height: 85vh;
+    }
+
+    .receipt-body {
+      padding: 1rem;
+      max-height: 50vh;
     }
   }
 </style>
 
 <div id="coins-widget">
   <div class="widget-card">
-    <h2>Minhas moedas de ouro</h2>
-    <p class="instruction-text">Informe seu e-mail para ver suas moedas de ouro</p>
+    <button id="info-button" class="info-button">
+      <span class="info-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 16V12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="12" cy="8" r="1" fill="currentColor"/>
+        </svg>
+      </span>
+      <span class="info-text">Informações</span>
+    </button>
+    <button id="logout-button" class="logout-button">Sair</button>
+    <img src="http://ordeminedita.com.br/wp-content/uploads/2025/09/cropped-LOGOS-LIPE1.png" alt="Logo" class="widget-logo" />
+    
+    <a href="#" id="view-receipt-link" class="view-receipt-link hidden">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="receipt-link-icon">
+        <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M10 9H9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Ver Extrato
+    </a>
+    
+    <div id="title-text" class="title-text">
+      <h2>Minhas moedas de ouro</h2>
+    </div>
+    <div id="instruction-text" class="instruction-text">
+      <p>Informe seu e-mail para ver suas moedas de ouro</p>
+    </div>
+    
+    <div id="title-spacer" class="spacer hidden"></div>
     
     <form id="coins-form" class="form-container">
       <input 
@@ -155,57 +934,81 @@
       <button type="submit" id="submit-button" class="submit-button">
         Verificar moedas
       </button>
+      <div id="error-message" class="error-message" style="display: none;"></div>
     </form>
 
-    <div id="result-area" class="result-area hidden">
-      <!-- Conteúdo será inserido dinamicamente via JavaScript -->
+    <div id="result-area" class="result-area hidden"></div>
+  </div>
+</div>
+
+<div id="info-modal" class="info-modal">
+  <div class="info-modal-content">
+    <div class="info-modal-header">
+      <h3 class="info-modal-title">Sobre as Moedas de Ouro</h3>
+      <button class="info-modal-close" id="info-modal-close">✕</button>
+    </div>
+    <div class="info-modal-body">
+      <p>As lendárias <span class="info-modal-highlight">Moedas de Ouro</span> da Ordem Inédita, forjadas nos cofres secretos do reino, podem ser usadas para conquistar produtos exclusivos dignos de um verdadeiro cavaleiro(a) (ou de um mago(a) do digital).</p>
+      <p>Cada valorosa <span class="info-modal-highlight">moeda de ouro equivale a R$ 1,00</span> e pode ser utilizada para comprar qualquer relíquia, poção ou bugiganga mística disponível no reino da Ordem Inédita.</p>
+      <p>Para encher seu baú de tesouros, você precisa <span class="info-modal-highlight">participar de eventos inéditos</span> convocados pela plataforma — quanto mais quests você cumprir, mais moedas de ouro vai juntar!</p>
+
+    </div>
+  </div>
+</div>
+
+<div id="receipt-modal" class="receipt-modal">
+  <div class="receipt-content">
+    <div class="receipt-header">
+      <h3>Extrato</h3>
+      <button class="receipt-close-btn" id="receipt-close-btn">×</button>
+    </div>
+    <div class="receipt-body" id="receipt-body">
     </div>
   </div>
 </div>
 
 <script>
-  // ============================================
-  // CONFIGURAÇÃO DA API
-  // ============================================
-  // TODO: Ajuste a URL base da sua API aqui
-  const API_BASE_URL = 'https://SEU_ENDPOINT_BACKEND_AQUI';
-  
-  // API Key fornecida
+  const API_BASE_URL = 'https://oi-coins-backend.evjibc.easypanel.host';
   const API_KEY = '62ba341e-4a6d-4572-b395-6a99f51010d9';
-  
-  // Endpoint da API (pode ser ajustado se necessário)
   const API_ENDPOINT = '/coins';
-  
-  // Formato esperado da resposta da API:
-  // {
-  //   "email": "usuario@exemplo.com",
-  //   "coins": 123
-  // }
-  // Se o formato for diferente, ajuste a função fetchCoinsByEmail abaixo
+  const ADMIN_API_ENDPOINT = '/admin/coins';
 
-  // ============================================
-  // FUNÇÕES DE GERENCIAMENTO DE COOKIES
-  // ============================================
-  
-  /**
-   * Cria ou atualiza um cookie com expiração em dias
-   * @param {string} name - Nome do cookie
-   * @param {string} value - Valor do cookie
-   * @param {number} days - Número de dias até expirar
-   */
+  const isInIframe = window.self !== window.top;
+  const useLocalStorage = isInIframe;
+
   function setCookie(name, value, days) {
     const date = new Date();
     date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
     const expires = `expires=${date.toUTCString()}`;
-    document.cookie = `${name}=${value};${expires};path=/`;
+    const sameSite = 'SameSite=None; Secure';
+    document.cookie = `${name}=${value};${expires};path=/;${sameSite}`;
+    
+    if (useLocalStorage) {
+      try {
+        localStorage.setItem(name, value);
+        localStorage.setItem(`${name}_expires`, date.getTime().toString());
+      } catch (e) {
+        console.warn('localStorage não disponível:', e);
+      }
+    }
   }
 
-  /**
-   * Obtém o valor de um cookie
-   * @param {string} name - Nome do cookie
-   * @returns {string|null} - Valor do cookie ou null se não existir
-   */
   function getCookie(name) {
+    if (useLocalStorage) {
+      try {
+        const expires = localStorage.getItem(`${name}_expires`);
+        if (expires && parseInt(expires) > Date.now()) {
+          return localStorage.getItem(name);
+        } else if (expires) {
+          localStorage.removeItem(name);
+          localStorage.removeItem(`${name}_expires`);
+        }
+        return null;
+      } catch (e) {
+        console.warn('localStorage não disponível:', e);
+      }
+    }
+    
     const nameEQ = `${name}=`;
     const ca = document.cookie.split(';');
     for (let i = 0; i < ca.length; i++) {
@@ -216,78 +1019,82 @@
     return null;
   }
 
-  /**
-   * Remove um cookie
-   * @param {string} name - Nome do cookie a ser removido
-   */
   function eraseCookie(name) {
-    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;SameSite=None; Secure`;
+    
+    if (useLocalStorage) {
+      try {
+        localStorage.removeItem(name);
+        localStorage.removeItem(`${name}_expires`);
+      } catch (e) {
+        console.warn('localStorage não disponível:', e);
+      }
+    }
   }
 
-  // ============================================
-  // INTEGRAÇÃO COM API
-  // ============================================
-  
-  /**
-   * Busca as moedas de ouro de um usuário através da API
-   * @param {string} email - E-mail do usuário
-   * @returns {Promise<number>} - Número de moedas
-   * @throws {Error} - Erro se a requisição falhar
-   */
   async function fetchCoinsByEmail(email) {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+
       const response = await fetch(`${API_BASE_URL}${API_ENDPOINT}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': API_KEY,
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, consultType: 'user' }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         if (response.status === 404) {
-          throw new Error('E-mail não encontrado');
+          throw new Error('Você ainda não possui moedas de ouro 😢');
+        } else if (response.status === 400) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || 'Dados inválidos');
         } else if (response.status === 401 || response.status === 403) {
           throw new Error('Erro de autenticação na API');
+        } else if (response.status >= 500) {
+          throw new Error('Erro no servidor. Tente novamente mais tarde.');
         } else {
-          throw new Error(`Erro ao buscar moedas: ${response.status}`);
+          throw new Error(`Erro ao buscar moedas (${response.status})`);
         }
       }
 
       const data = await response.json();
       
-      // Ajuste aqui se o formato da resposta for diferente
       if (data.coins === undefined) {
         throw new Error('Formato de resposta da API inválido');
       }
 
       return data.coins;
     } catch (error) {
-      // Se for erro de rede, lança uma mensagem genérica
-      if (error.message.includes('fetch')) {
+      if (error.name === 'AbortError') {
+        throw new Error('Tempo de espera esgotado. Tente novamente.');
+      }
+      if (error.message.includes('fetch') || error.message.includes('Failed to fetch')) {
         throw new Error('Erro de conexão. Verifique sua internet e tente novamente.');
       }
       throw error;
     }
   }
 
-  // ============================================
-  // CONTROLE DE ESTADOS DA UI
-  // ============================================
-  
-  /**
-   * Atualiza o estado visual da interface
-   * @param {string} state - Estado: 'loading', 'success', 'error', 'form'
-   * @param {Object} data - Dados adicionais (ex: { coins, message })
-   */
   function updateUIState(state, data = {}) {
     const formContainer = document.querySelector('#coins-widget .form-container');
     const resultArea = document.getElementById('result-area');
     const submitButton = document.getElementById('submit-button');
     const emailInput = document.getElementById('email-input');
+    const titleText = document.getElementById('title-text');
+    const instructionText = document.getElementById('instruction-text');
+    const logoutButton = document.getElementById('logout-button');
 
-    // Limpa o conteúdo anterior
+    if (!formContainer || !resultArea || !submitButton) {
+      return;
+    }
+
     resultArea.innerHTML = '';
     resultArea.className = 'result-area';
 
@@ -297,52 +1104,84 @@
         resultArea.classList.remove('hidden');
         resultArea.innerHTML = '<div class="loading-message">Buscando suas moedas...</div>';
         submitButton.disabled = true;
+        const widgetCardLoading = document.querySelector('#coins-widget .widget-card');
+        if (widgetCardLoading) widgetCardLoading.classList.remove('logged-in');
         break;
 
       case 'success':
         formContainer.classList.add('hidden');
         resultArea.classList.remove('hidden');
+        if (titleText) titleText.classList.add('hidden');
+        if (instructionText) instructionText.classList.add('hidden');
+        if (logoutButton) logoutButton.classList.add('show');
+        const spacer = document.getElementById('title-spacer');
+        if (spacer) spacer.classList.remove('hidden');
+        const widgetCard = document.querySelector('#coins-widget .widget-card');
+        if (widgetCard) widgetCard.classList.add('logged-in');
+        
         const coins = data.coins || 0;
+        const coinsFormatted = coins.toLocaleString('pt-BR');
         resultArea.innerHTML = `
           <div class="success-message">
-            Você tem <span class="coins-badge">${coins} moedas de ouro</span>
+            Você tem <span class="coins-badge"><span class="coins-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#FFD700" stroke="#FFA500" stroke-width="1.5"/><circle cx="12" cy="12" r="8" fill="none" stroke="#FFA500" stroke-width="1" opacity="0.6"/><path d="M12 8L12 16M8 12L16 12" stroke="#FFA500" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="2" fill="#FFA500"/></svg></span> ${coinsFormatted}</span>
           </div>
+          <a href="https://api.whatsapp.com/send?phone=5516997618739" target="_blank" class="contact-button">
+            GASTAR MINHAS MOEDAS
+          </a>
+          <p class="contact-text">Entre em contato para gastar suas moedas</p>
         `;
+        
+        const viewReceiptLink = document.getElementById('view-receipt-link');
+        if (viewReceiptLink) {
+          viewReceiptLink.classList.remove('hidden');
+        }
         submitButton.disabled = false;
         break;
 
       case 'error':
         formContainer.classList.remove('hidden');
-        resultArea.classList.remove('hidden');
-        resultArea.innerHTML = `<div class="error-message">${data.message || 'Erro ao buscar suas moedas'}</div>`;
+        resultArea.classList.add('hidden');
+        const errorMessage = document.getElementById('error-message');
+        if (errorMessage) {
+          errorMessage.textContent = data.message || 'Erro ao buscar suas moedas';
+          errorMessage.style.display = 'block';
+        }
         submitButton.disabled = false;
-        emailInput.focus();
+        setTimeout(() => emailInput.focus(), 100);
         break;
 
       case 'form':
       default:
         formContainer.classList.remove('hidden');
         resultArea.classList.add('hidden');
+        const viewReceiptLinkForm = document.getElementById('view-receipt-link');
+        if (viewReceiptLinkForm) {
+          viewReceiptLinkForm.classList.add('hidden');
+        }
+        if (titleText) titleText.classList.remove('hidden');
+        if (instructionText) instructionText.classList.remove('hidden');
+        if (logoutButton) logoutButton.classList.remove('show');
+        const spacerForm = document.getElementById('title-spacer');
+        if (spacerForm) spacerForm.classList.add('hidden');
+        const widgetCardForm = document.querySelector('#coins-widget .widget-card');
+        if (widgetCardForm) widgetCardForm.classList.remove('logged-in');
+        const errorMessageForm = document.getElementById('error-message');
+        if (errorMessageForm) {
+          errorMessageForm.style.display = 'none';
+        }
         submitButton.disabled = false;
         break;
     }
   }
 
-  // ============================================
-  // HANDLERS DE EVENTOS
-  // ============================================
-  
-  /**
-   * Manipula o envio do formulário
-   * @param {Event} event - Evento de submit
-   */
   async function handleFormSubmit(event) {
     event.preventDefault();
 
     const emailInput = document.getElementById('email-input');
+    if (!emailInput) return;
+
     const email = emailInput.value.trim();
 
-    // Validação básica de e-mail
     if (!email) {
       updateUIState('error', { message: 'Por favor, informe um e-mail' });
       return;
@@ -354,75 +1193,367 @@
       return;
     }
 
-    // Exibe estado de carregamento
     updateUIState('loading');
 
     try {
-      // Busca as moedas na API
       const coins = await fetchCoinsByEmail(email);
-
-      // Sucesso: salva o cookie e exibe o resultado
-      setCookie('coins_email', email, 30);
+      const emailTrimmed = email.trim().toLowerCase();
+      setCookie('coins_email', emailTrimmed, 30);
       setCookie('coins_value', coins.toString(), 30);
-      
       updateUIState('success', { coins });
     } catch (error) {
-      // Erro: exibe mensagem e mantém o formulário visível
       updateUIState('error', { message: error.message });
     }
   }
 
-  /**
-   * Inicializa o widget ao carregar a página
-   */
+  function handleLogout() {
+    eraseCookie('coins_email');
+    eraseCookie('coins_value');
+    updateUIState('form');
+    const emailInput = document.getElementById('email-input');
+    if (emailInput) {
+      emailInput.value = '';
+      emailInput.focus();
+    }
+  }
+
+  function openInfoModal(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const modal = document.getElementById('info-modal');
+    if (modal) {
+      modal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeInfoModal(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    const modal = document.getElementById('info-modal');
+    if (modal) {
+      modal.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+  }
+
+  async function fetchUserHistory(email) {
+    try {
+      if (!email || typeof email !== 'string' || email.trim() === '') {
+        console.error('Email inválido para buscar histórico:', email);
+        return [];
+      }
+
+      const emailTrimmed = email.trim().toLowerCase();
+      console.log('Buscando histórico para:', emailTrimmed);
+      
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINT}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY,
+        },
+        body: JSON.stringify({ email: emailTrimmed, consultType: 'statement' }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Erro ao buscar histórico:', response.status, errorText);
+        throw new Error(`Erro ao buscar histórico (${response.status})`);
+      }
+
+      const data = await response.json();
+      console.log('Resposta completa da API:', data);
+      console.log('spend_history recebido:', data.spend_history);
+      console.log('Tipo de spend_history:', typeof data.spend_history);
+      console.log('É array?', Array.isArray(data.spend_history));
+      
+      // Se spend_history é uma string JSON, fazer parse
+      let spendHistory = data.spend_history;
+      if (typeof spendHistory === 'string') {
+        try {
+          spendHistory = JSON.parse(spendHistory);
+          console.log('spend_history após parse:', spendHistory);
+        } catch (parseError) {
+          console.error('Erro ao fazer parse do spend_history:', parseError);
+          return [];
+        }
+      }
+      
+      if (spendHistory && Array.isArray(spendHistory)) {
+        console.log('Retornando histórico com', spendHistory.length, 'itens');
+        return spendHistory;
+      }
+      
+      console.warn('spend_history não é um array válido:', spendHistory);
+      return [];
+    } catch (error) {
+      console.error('Erro ao buscar histórico:', error);
+      return [];
+    }
+  }
+
+  function openReceiptModal(history) {
+    const modal = document.getElementById('receipt-modal');
+    const body = document.getElementById('receipt-body');
+    
+    if (!modal || !body) {
+      console.error('Modal ou body não encontrado');
+      return;
+    }
+
+    console.log('Abrindo modal com histórico:', history);
+    console.log('Tipo do histórico:', typeof history);
+    console.log('É array?', Array.isArray(history));
+    console.log('Tamanho:', history ? history.length : 0);
+
+    // Garantir que history seja um array
+    if (!history) {
+      history = [];
+    } else if (typeof history === 'string') {
+      try {
+        history = JSON.parse(history);
+      } catch (e) {
+        console.error('Erro ao fazer parse do histórico:', e);
+        history = [];
+      }
+    } else if (!Array.isArray(history)) {
+      console.warn('Histórico não é um array, convertendo:', history);
+      history = [];
+    }
+
+    if (history && Array.isArray(history) && history.length > 0) {
+      body.innerHTML = history.map((item) => {
+        try {
+          const date = item.date ? new Date(item.date).toLocaleString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          }) : '-';
+          const description = item.description || item.item || 'Gasto';
+          const previousCoins = item.previous_coins !== undefined ? item.previous_coins : (item.old_coins !== undefined ? item.old_coins : 0);
+          const spent = item.spent !== undefined ? item.spent : (item.amount !== undefined ? item.amount : (item.coins !== undefined ? item.coins : 0));
+          const newCoins = item.new_coins !== undefined ? item.new_coins : (previousCoins - spent);
+          
+          const isCredit = newCoins > previousCoins;
+          const colorClass = isCredit ? 'receipt-item-credit' : 'receipt-item-debit';
+          const colorValue = isCredit ? '#006400' : '#8b0000';
+          const operator = isCredit ? '+' : '-';
+          
+          return `
+            <div class="receipt-item">
+              <div class="receipt-item-left">
+                <div class="receipt-item-title">${description}</div>
+                <div class="receipt-item-details">${date}</div>
+              </div>
+              <div class="receipt-item-right ${colorClass}" style="color: ${colorValue};">
+                <div style="color: ${colorValue}; font-weight: bold;">${previousCoins} ${operator} ${spent} = ${newCoins}</div>
+              </div>
+            </div>
+          `;
+        } catch (e) {
+          return `<div class="receipt-item">Erro ao renderizar item</div>`;
+        }
+      }).join('');
+    } else {
+      body.innerHTML = '<div style="text-align: center; padding: 2rem; color: #888;">Nenhum gasto registrado ainda.</div>';
+    }
+
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeReceiptModal() {
+    const modal = document.getElementById('receipt-modal');
+    if (modal) {
+      modal.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+  }
+
+  async function handleViewReceipt(event) {
+    event.preventDefault();
+    const email = getCookie('coins_email');
+    
+    if (!email) {
+      console.error('Email não encontrado no cookie');
+      const modal = document.getElementById('receipt-modal');
+      const body = document.getElementById('receipt-body');
+      if (modal && body) {
+        body.innerHTML = '<div style="text-align: center; padding: 2rem; color: #ef4444;">Erro: E-mail não encontrado. Por favor, faça login novamente.</div>';
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+      }
+      return;
+    }
+
+    const modal = document.getElementById('receipt-modal');
+    const body = document.getElementById('receipt-body');
+    
+    if (modal && body) {
+      body.innerHTML = '<div style="text-align: center; padding: 2rem; color: #888;">Carregando extrato...</div>';
+      modal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    try {
+      const history = await fetchUserHistory(email);
+      openReceiptModal(history);
+    } catch (error) {
+      console.error('Erro ao carregar extrato:', error);
+      if (body) {
+        body.innerHTML = '<div style="text-align: center; padding: 2rem; color: #ef4444;">Erro ao carregar extrato. Tente novamente.</div>';
+      }
+    }
+  }
+
+  function forceWidgetWidth() {
+    const widget = document.getElementById('coins-widget');
+    if (!widget) return;
+
+    // Forçar estilos inline no widget
+    widget.style.setProperty('max-width', '600px', 'important');
+    widget.style.setProperty('width', '100%', 'important');
+    widget.style.setProperty('box-sizing', 'border-box', 'important');
+    widget.style.setProperty('margin', '0 auto', 'important');
+    widget.style.setProperty('padding', '1.5rem', 'important');
+
+    // Forçar estilos em todos os pais Elementor
+    let parent = widget.parentElement;
+    const maxIterations = 15;
+    let iterations = 0;
+    const elementorClasses = [
+      'elementor-widget-container',
+      'elementor-widget',
+      'elementor-column',
+      'elementor-section',
+      'elementor-container',
+      'elementor-row',
+      'elementor-element',
+      'elementor-column__content'
+    ];
+
+    while (parent && iterations < maxIterations) {
+      if (parent.classList) {
+        const hasElementorClass = elementorClasses.some(cls => parent.classList.contains(cls));
+        if (hasElementorClass || parent.className.includes('elementor')) {
+          parent.style.setProperty('max-width', '100%', 'important');
+          parent.style.setProperty('width', '100%', 'important');
+          parent.style.setProperty('box-sizing', 'border-box', 'important');
+          parent.style.setProperty('padding', '0', 'important');
+          parent.style.setProperty('margin', '0', 'important');
+        }
+      }
+      parent = parent.parentElement;
+      iterations++;
+    }
+  }
+
   function initCoinsWidget() {
+    forceWidgetWidth();
+
     const form = document.getElementById('coins-form');
+    const logoutButton = document.getElementById('logout-button');
+    const infoButton = document.getElementById('info-button');
+    const infoModalClose = document.getElementById('info-modal-close');
+    const infoModal = document.getElementById('info-modal');
     const savedEmail = getCookie('coins_email');
 
-    // Adiciona listener ao formulário
     form.addEventListener('submit', handleFormSubmit);
 
-    // Verifica se existe um e-mail salvo em cookie
+    if (logoutButton) {
+      logoutButton.addEventListener('click', handleLogout);
+    }
+
+    if (infoButton) {
+      infoButton.addEventListener('click', openInfoModal);
+    }
+
+    if (infoModalClose) {
+      infoModalClose.addEventListener('click', closeInfoModal);
+    }
+
+    if (infoModal) {
+      infoModal.addEventListener('click', function(e) {
+        if (e.target === infoModal) {
+          closeInfoModal(e);
+        }
+      });
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        const infoModal = document.getElementById('info-modal');
+        const receiptModal = document.getElementById('receipt-modal');
+        
+        if (infoModal && infoModal.classList.contains('show')) {
+          closeInfoModal(e);
+        } else if (receiptModal && receiptModal.classList.contains('show')) {
+          closeReceiptModal();
+        }
+      }
+    });
+
+    const receiptCloseBtn = document.getElementById('receipt-close-btn');
+    if (receiptCloseBtn) {
+      receiptCloseBtn.addEventListener('click', closeReceiptModal);
+    }
+
+    const receiptModal = document.getElementById('receipt-modal');
+    if (receiptModal) {
+      receiptModal.addEventListener('click', function(e) {
+        if (e.target === receiptModal) {
+          closeReceiptModal();
+        }
+      });
+    }
+
+    document.addEventListener('click', function(e) {
+      const viewReceiptLink = e.target.closest('#view-receipt-link');
+      if (viewReceiptLink) {
+        handleViewReceipt(e);
+      }
+    });
+
     if (savedEmail) {
-      // Ocultar formulário e buscar automaticamente
       const formContainer = document.querySelector('#coins-widget .form-container');
       formContainer.classList.add('hidden');
-      
       updateUIState('loading');
       
-      // Busca as moedas automaticamente
       fetchCoinsByEmail(savedEmail)
         .then((coins) => {
           const savedCoins = getCookie('coins_value');
-          // Atualiza o cookie de valor se necessário
           if (savedCoins !== coins.toString()) {
             setCookie('coins_value', coins.toString(), 30);
           }
           updateUIState('success', { coins });
         })
         .catch((error) => {
-          // Se houver erro (ex: e-mail não existe mais), limpa o cookie e mostra o formulário
           eraseCookie('coins_email');
           eraseCookie('coins_value');
           updateUIState('form');
           updateUIState('error', { message: error.message });
         });
     } else {
-      // Não há cookie: mostra o formulário normalmente
       updateUIState('form');
     }
   }
 
-  // ============================================
-  // INICIALIZAÇÃO
-  // ============================================
-  
-  // Aguarda o DOM estar pronto antes de inicializar
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initCoinsWidget);
   } else {
-    // DOM já está pronto
     initCoinsWidget();
   }
+
+  window.addEventListener('resize', forceWidgetWidth);
+  setTimeout(forceWidgetWidth, 100);
+  setTimeout(forceWidgetWidth, 500);
+  setTimeout(forceWidgetWidth, 1000);
 </script>
+</body>
+</html>
 

@@ -30,3 +30,12 @@ COMO_ATUALIZAR_FRONTEND.md
 RESUMO_RAPIDO.md
 RESOLVER_ERRO_403.md
 .env.example
+
+# Arquivos temporários e backups
+*.zip
+*-backup*/
+*backup*/
+Dockerfile.minimal
+Dockerfile.simple
+coins-admin-widget.html
+coins-widget.html
